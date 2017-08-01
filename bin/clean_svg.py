@@ -20,4 +20,22 @@ with open(svgname) as fd:
     doc = xmltodict.parse(fd.read())
 
 
-pprint(doc)
+def clean_element(node):
+    if isinstance(node, str):
+        return node
+    elif isinstance(node, dict):
+        clean_node = {}
+        for item in node:
+            itemname = item
+            clean_node[itemname] = clean_element(node[item])
+        return clean_node
+    elif isinstance(node, list):   
+        clean_node = []
+        for item in node:
+            clean_node.append(clean_element(item))
+        return clean_node
+
+svg = clean_element(doc)
+
+doc2 = xmltodict.unparse(svg)
+print(doc2)
